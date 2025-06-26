@@ -9,12 +9,14 @@ import {Model, DataType, Table, Column} from 'sequelize-typescript'
 class User extends Model{
 
     @Column({
-        type : DataType.STRING
+        type : DataType.STRING,
+        unique : true
     })
     declare email : string
 
         @Column({
-        type : DataType.STRING
+        type : DataType.STRING,
+        unique : true
     })
     declare username : string
 
