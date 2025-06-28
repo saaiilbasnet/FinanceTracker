@@ -25,10 +25,10 @@ function Register() {
       event.preventDefault();
       const response = await axios.post("http://localhost:3000/api/register",userRegister);
       if(response.status == 200){
-        alert("Register Successful!");
-        navigate('/login');
+        toast.success('Register Successful!');
+         navigate('/login');
       }else{
-        alert("Something went wrong");
+        toast.error('Something went wrong!');
         navigate('/register');
       }
   }

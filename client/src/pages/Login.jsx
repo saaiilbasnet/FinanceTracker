@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-
+import toast from "react-hot-toast"
 
 function LogIn() {
 
@@ -21,18 +21,37 @@ function LogIn() {
       
   }
 
-  const logInUserSubmission = async (event)=>{
-      event.preventDefault();
-      const response = await axios.post("http://localhost:3000/api/login",loginUser);
-      if(response.status == 200 ){
-        alert("Login Successful!");
-        navigate('/');
-      }else{
-        alert("Login Failed!");
-        navigate('/login');
-      }
+const logInUserSubmission = async (event) => {
+  event.preventDefault();
 
+  try {
+    const response = await axios.post("http://localhost:3000/api/login", loginUser);
+
+    toast.success("Login Successful!");
+    navigate("/");
+  } catch (error) {
+    if (error.response) {
+      const status = error.response.status;
+      const message = error.response.data?.message || "An error occurred";
+
+      if (status === 404) {
+        toast.error(message);
+      } else if (status === 401) {
+        toast.error(message);
+      } else if (status === 400) {
+        toast.error(message);
+      } else {
+        toast.error("Something went wrong!");
+      }
+      navigate("/login");
+    } else if (error.request) {
+      toast.error("No response from server. Please try again later.");
+    } else {
+      toast.error("Error: " + error.message);
+    }
   }
+};
+
 
   return (
     <div>
@@ -61,7 +80,7 @@ function LogIn() {
               Password
             </label>
             <div className="mt-1">
-              <input onChange={handleChange} id="password" name="password" type="password" autoComplete="current-password" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your password" />
+              <input onChange={handleChange} id="password" name="password" type="password"  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your password" />
             </div>
           </div>
           <div className="flex items-center justify-between">
