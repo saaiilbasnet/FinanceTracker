@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 
 export const signup=async (req:Request, res:Response)=>{
 try{
+    console.log("Sign up route hit::::")
 // Signup Logic
 const {username, email, password}=req.body;
 
