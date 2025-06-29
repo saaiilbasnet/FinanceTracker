@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom'
 
 function Register() {
@@ -21,17 +22,25 @@ function Register() {
    
   }
 
-  const registerUser = async (event)=>{
-      event.preventDefault();
-      const response = await axios.post("http://localhost:3000/api/register",userRegister);
-      if(response.status == 200){
-        toast.success('Register Successful!');
-         navigate('/login');
-      }else{
-        toast.error('Something went wrong!');
-        navigate('/register');
-      }
+  const registerUser = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await axios.post("http://localhost:3000/api/register", userRegister);
+
+    toast.success('Register Successful!');
+    navigate('/login');
+  } catch (error) {
+    console.error(error.response?.data || error.message); // For debugging
+
+    if (error.response?.status === 400 && error.response.data.fullError) {
+      const firstError = error.response.data.fullError[0]?.message || "Validation failed";
+      toast.error(firstError);
+    } else {
+      toast.error('Something went wrong!');
+    }
   }
+};
 
   return (
 <div>

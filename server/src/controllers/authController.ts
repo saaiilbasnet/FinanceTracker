@@ -16,12 +16,12 @@ class AuthController{
         const {username, email, password} = req.body;
 
         if(!email || !password || !username){
-            res.status(400).json({
+            res.status(404).json({
                 message : "Please enter email, username and password"
             })
         }else{
 
-            await User.create({
+                await User.create({
                 username : username,
                 email : email,
                 password : bcrypt.hashSync(password, 10)
@@ -29,7 +29,7 @@ class AuthController{
 
             res.status(200).json({
                 message : "Successfully registered user!"
-            })
+            })        
 
         }
 
