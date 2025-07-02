@@ -16,12 +16,12 @@ class AuthController{
         const {username, email, password} = req.body;
 
         if(!email || !password || !username){
-            res.status(400).json({
+            res.status(404).json({
                 message : "Please enter email, username and password"
             })
         }else{
 
-            await User.create({
+                await User.create({
                 username : username,
                 email : email,
                 password : bcrypt.hashSync(password, 10)
@@ -29,7 +29,7 @@ class AuthController{
 
             res.status(200).json({
                 message : "Successfully registered user!"
-            })
+            })        
 
         }
 
@@ -39,13 +39,12 @@ class AuthController{
 
         const {email, password} = req.body;
         if(!email || !password){
-            res.status(400).json({
+             res.status(400).json({
                 message : "Please enter email and password!"
             })
-            return
         }
 
-        const userData = await User.findAll({
+        const userData = await User.findOne({
             where : {
                 email : email
             }
@@ -53,24 +52,24 @@ class AuthController{
 
         //check if the user exist 
 
-    if(userData.length === 0){
+    if(!userData){
 
-        res.status(400).json({
+         res.status(404).json({
             message : "Please Register the user!"
         })
 
     }else{
 
-        const isPasswordMatched = bcrypt.compareSync(password, userData[0].password);
+        const isPasswordMatched = bcrypt.compareSync(password, userData.password);
 
         if(!isPasswordMatched){
-            res.status(403).json({
+             res.status(401).json({
                 message : "Invalid Crediantials!"
             })
         }else{
             // @ts-ignore
             const token = jwt.sign({
-                id : userData[0].id
+                id : userData.id
             }, process.env.JWT_SECRET!,{
                 expiresIn : process.env.JWT_EXPIRES_IN
             })
