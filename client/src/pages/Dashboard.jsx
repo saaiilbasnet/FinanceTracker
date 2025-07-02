@@ -1,10 +1,12 @@
 import SideBar from "../components/SideBar"
+import SummaryCards from "../components/SummaryCards"
 
 function Dashboard() {
   return (
-    <div>
+    <div className="flex h-screen w-screen">
       
     <SideBar />
+    <SummaryCards />
 
     </div>
   )
