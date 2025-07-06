@@ -10,9 +10,9 @@ import { Model, Column, DataType, Table } from "sequelize-typescript";
 class Income extends Model<Income>{
 
     @Column({
-        type:DataType.STRING,
+        type:DataType.DECIMAL(10,2),  // 10 digit, 2 float eg: 9999999999.99
         allowNull:false,
-    }) incomeAmount! : string
+    }) incomeAmount! : number
 
     @Column({
         type:DataType.STRING,
@@ -20,9 +20,9 @@ class Income extends Model<Income>{
     }) incomeSource!:string
 
     @Column({
-        type:DataType.STRING,
+        type:DataType.DATE,
         allowNull:false,
-    }) incomeDate!:string
+    }) incomeDate!:Date
 
 }
 

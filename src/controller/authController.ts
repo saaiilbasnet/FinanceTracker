@@ -9,7 +9,7 @@ try{
 const {username, email, password}=req.body;
 
 
-if(!username || !email || !password){
+if(!username && !email && !password){
   return res.status(500).json({
         message:"Please provide username, email, password"
 

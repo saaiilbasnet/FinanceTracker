@@ -6,13 +6,17 @@ import Income from "../database/models/incomeModel";
 export const createIncome = async (req: Request, res: Response) => {
   // Wrapped inside Try catch
   try {
-    const { incomeAmount, incomeDate, incomeSource } = req.body;
+    let { incomeAmount, incomeDate, incomeSource } = req.body;
 
     // Input validation --->
-    if (!incomeAmount || !incomeDate || !incomeSource) {
+    if (!incomeAmount && !incomeDate && !incomeSource) {
       return res.status(400).json({
         message: "Please provide incomeAmount,incomeDate,incomeSource ",
       });
+    }
+      incomeAmount=parseFloat(incomeAmount);
+    if (isNaN(incomeAmount)) {
+      return res.status(400).json({ message: "incomeAmount must be a number" });
     }
 
     // Income add:
@@ -51,11 +55,16 @@ export const getAllIncomes = async (req: Request, res: Response) => {
   }
 };
 
+
+
+
+
 // Fetch a single income:
 
 export const getSingleIncome = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
+    
     const income = await Income.findByPk(id);
     if (!income) {
       return res.status(404).json({
@@ -74,11 +83,38 @@ export const getSingleIncome = async (req: Request, res: Response) => {
   }
 };
 
+
+// Total income, to be continued...
+
+// Get total income amount:
+
+export const cashInHand=async(req:Request,res:Response)=>{
+  try{
+  const totalIncome=await Income.sum('incomeAmount');
+console.log('Total income:', totalIncome);
+
+  res.status(200).json({
+    message:"Total income fetched successfully",totalIncome
+  })
+  }catch(error){
+res.status(500).json({
+  message:"Error",
+  error
+})
+  }
+}
+
+
 // Income Update garne logic:
 
 export const editIncome = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
+     if(isNaN(id)){
+      res.status(400).json({
+        message:"Please provide a valid id"
+      })
+    }
     // k k update garne ta?:
     const { incomeAmount, incomeDate, incomeSource } = req.body;
 
@@ -114,6 +150,11 @@ export const editIncome = async (req: Request, res: Response) => {
 export const deleteIncome = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
+      if(isNaN(id)){
+      res.status(400).json({
+        message:"Please provide a valid id"
+      })
+    }
     await Income.destroy({
       where: {
         id,
