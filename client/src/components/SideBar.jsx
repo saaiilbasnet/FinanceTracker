@@ -89,7 +89,8 @@ function SideBar() {
           </NavLink>
         </nav>
 
-        <div className="mt-50 p-4">
+        {/* This div seems positioned incorrectly, needs to be at the bottom */}
+        <div className="absolute bottom-4 p-4 w-full"> {/* Added absolute positioning and w-full */}
           <div className="flex items-center">
             <img
               className="h-8 w-8 rounded-full"
