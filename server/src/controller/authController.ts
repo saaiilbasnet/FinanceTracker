@@ -1,43 +1,88 @@
 import { Request, Response } from "express";
 import User from "../database/models/userModel";
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-export const signup = async (req: Request, res: Response) => {
-    console.log("Sign up route hit::::")
-    // Signup Logic
-    const { username, email, password } = req.body;
+class AuthController{
 
-    if (!username || !email || !password) {
-        return res.status(500).json({
-            message: "Please provide username, email, password"
-        });
-    }
+    static async registerUser(req : Request, res: Response){
 
-    // Check if email already exist or not
-    const existingUser = await User.findOne({
-        where: {
-            email
+        if(req.body == undefined){
+            return res.status(400).json({
+                message : "Invalid Creadiantials!"
+            })
         }
-    });
-    if (existingUser) {
-        return res.status(409).json({
-            message: "Email already exists"
-        });
+
+        const {username, email, password} = req.body;
+
+        if(!email || !password || !username){
+            res.status(404).json({
+                message : "Please enter email, username and password"
+            })
+        }else{
+
+                await User.create({
+                username : username,
+                email : email,
+                password : bcrypt.hashSync(password, 10)
+            })
+
+            res.status(200).json({
+                message : "Successfully registered user!"
+            })        
+
+        }
+
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Create new user
-    const newUser = await User.create({
-        username,
-        email,
-        password: hashedPassword
-    });
-    res.status(200).json({
-        message: "SignUp successful",
-    });
-};
+    static async loginUser(req: Request, res: Response):Promise<void>{
 
-export const signin = async (req: Request, res: Response) => {
-    // Signin Logic
-};
+        const {email, password} = req.body;
+        if(!email || !password){
+             res.status(400).json({
+                message : "Please enter email and password!"
+            })
+        }
+
+        const userData = await User.findOne({
+            where : {
+                email : email
+            }
+        })
+
+        //check if the user exist 
+
+    if(!userData){
+
+         res.status(404).json({
+            message : "Please Register the user!"
+        })
+
+    }else{
+
+        const isPasswordMatched = bcrypt.compareSync(password, userData.password);
+
+        if(!isPasswordMatched){
+             res.status(401).json({
+                message : "Invalid Crediantials!"
+            })
+        }else{
+            // @ts-ignore
+            const token = jwt.sign({
+                id : userData.id
+            }, process.env.JWT_SECRET!,{
+                expiresIn : process.env.JWT_EXPIRES_IN
+            })
+                    res.status(200).json({
+            message : "Login Successful!",
+            token : token
+        })
+        }
+
+    }
+
+    }
+
+}
+
+export default AuthController

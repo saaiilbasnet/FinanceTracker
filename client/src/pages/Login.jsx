@@ -1,6 +1,58 @@
-import { Link } from "react-router-dom"
+import axios from "axios"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import toast from "react-hot-toast"
 
 function LogIn() {
+
+  const navigate = useNavigate()
+  const [loginUser, setLoginUser] = useState({
+    email : "",
+    password : ""
+  })
+
+  const handleChange = (event)=>{
+      const {name, value} = event.target;
+      setLoginUser({
+        ...loginUser,
+        [name] : value
+      })
+      console.log(loginUser);
+      
+  }
+
+const logInUserSubmission = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await axios.post("http://localhost:3000/api/login", loginUser);
+    localStorage.setItem("token", response.data.token); 
+    toast.success("Login Successful!");
+    navigate("/");
+  } catch (error) {
+    if (error.response) {
+      const status = error.response.status;
+      const message = error.response.data?.message || "An error occurred";
+
+      if (status === 404) {
+        toast.error(message);
+      } else if (status === 401) {
+        toast.error(message);
+      } else if (status === 400) {
+        toast.error(message);
+      } else {
+        toast.error("Something went wrong!");
+      }
+      navigate("/login");
+    } else if (error.request) {
+      toast.error("No response from server. Please try again later.");
+    } else {
+      toast.error("Error: " + error.message);
+    }
+  }
+};
+
+
   return (
     <div>
       
@@ -14,13 +66,13 @@ function LogIn() {
     </div>
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        <form className="space-y-6" action="#" method="POST">
+        <form className="space-y-6" onSubmit={logInUserSubmission}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email address
             </label>
             <div className="mt-1">
-              <input id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your email address" />
+              <input onChange={handleChange} id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your email address" />
             </div>
           </div>
           <div>
@@ -28,7 +80,7 @@ function LogIn() {
               Password
             </label>
             <div className="mt-1">
-              <input id="password" name="password" type="password" autoComplete="current-password" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your password" />
+              <input onChange={handleChange} id="password" name="password" type="password"  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your password" />
             </div>
           </div>
           <div className="flex items-center justify-between">

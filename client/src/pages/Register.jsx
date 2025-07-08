@@ -1,7 +1,47 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import axios from 'axios'
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom'
 
 function Register() {
+  
+  const navigate = useNavigate();
+  const [userRegister, setUserRegister] = useState({
+        username : "",
+        email : "",
+        password : ""
+  });
+
+  const handleChange = (event)=>{
+   const {name, value} = event.target;
+   setUserRegister({
+    ...userRegister,
+    [name] : value
+   })
+   console.log(userRegister);
+   
+  }
+
+  const registerUser = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await axios.post("http://localhost:3000/api/register", userRegister);
+
+    toast.success('Register Successful!');
+    navigate('/login');
+  } catch (error) {
+    console.error(error.response?.data || error.message); // For debugging
+
+    if (error.response?.status === 400 && error.response.data.fullError) {
+      const firstError = error.response.data.fullError[0]?.message || "Validation failed";
+      toast.error(firstError);
+    } else {
+      toast.error('Something went wrong!');
+    }
+  }
+};
+
   return (
 <div>
   <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -13,13 +53,13 @@ function Register() {
     </div>
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        <form className="space-y-6" action="#" method="POST">
+        <form className="space-y-6" onSubmit={registerUser}>
                     <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Username
+              Full Name
             </label>
             <div className="mt-1">
-              <input id="email" name="username" type="text" autoComplete="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your username" />
+              <input onChange={handleChange} id="email" name="username" type="text" autoComplete="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your username" />
             </div>
           </div>
           <div>
@@ -27,7 +67,7 @@ function Register() {
               Email address
             </label>
             <div className="mt-1">
-              <input id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your email address" />
+              <input onChange={handleChange} id="email" name="email" type="email" autoComplete="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your email address" />
             </div>
           </div>
           <div>
@@ -35,7 +75,7 @@ function Register() {
               Password
             </label>
             <div className="mt-1">
-              <input id="password" name="password" type="password" autoComplete="current-password" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your password" />
+              <input onChange={handleChange} id="password" name="password" type="password" autoComplete="current-password" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Enter your password" />
             </div>
           </div>
           <div className="flex items-center justify-between">
