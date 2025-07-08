@@ -2,6 +2,7 @@
 
 import { Request, Response } from "express";
 import Income from "../database/models/incomeModel";
+import Expense from "../database/models/expenseModel";
 
 export const createIncome = async (req: Request, res: Response) => {
   // Wrapped inside Try catch
@@ -9,7 +10,7 @@ export const createIncome = async (req: Request, res: Response) => {
     let { incomeAmount, incomeDate, incomeSource } = req.body;
 
     // Input validation --->
-    if (!incomeAmount && !incomeDate && !incomeSource) {
+    if (!incomeAmount || !incomeDate || !incomeSource) {
       return res.status(400).json({
         message: "Please provide incomeAmount,incomeDate,incomeSource ",
       });
@@ -83,14 +84,14 @@ export const getSingleIncome = async (req: Request, res: Response) => {
   }
 };
 
-
-// Total income, to be continued...
-
 // Get total income amount:
 
 export const cashInHand=async(req:Request,res:Response)=>{
   try{
-  const totalIncome=await Income.sum('incomeAmount');
+  const totalIncome=await Income.sum('incomeAmount') || 0;
+  const totalExpense=await Expense.sum('expenseAmount') || 0;
+
+  const cashInHand=totalIncome-totalExpense;
 console.log('Total income:', totalIncome);
 
   res.status(200).json({

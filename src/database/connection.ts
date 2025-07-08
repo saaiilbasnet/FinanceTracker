@@ -1,6 +1,7 @@
 import {Sequelize} from 'sequelize-typescript'
 
 import Income from './models/incomeModel';
+import Expense from './models/expenseModel';
 //object instantation
 const CONNECTION_STRING = process.env.DATABASE_URL;
 if(!CONNECTION_STRING){
@@ -10,7 +11,7 @@ if(!CONNECTION_STRING){
 }
   const sequelize = new Sequelize(CONNECTION_STRING,{
     dialect : "postgres",
-    models : [Income],
+    models : [Income,Expense],
     dialectOptions:{
         ssl:{
             rejectUnauthorized:false,
@@ -30,7 +31,7 @@ sequelize.authenticate()
 })
 
 // migration 
-sequelize.sync({alter: false}).then(()=>{
+sequelize.sync({force: true}).then(()=>{
     console.log("Migrated to Supabase!");
     
 }).catch((error)=>{

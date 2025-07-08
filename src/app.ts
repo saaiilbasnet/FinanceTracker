@@ -2,8 +2,8 @@
 
 import express from 'express'
 import authRoute from './route/authRoute'
-import incomeRoutes from './route/incomeRoute';
-
+import incomeRoute from './route/incomeRoute';
+import expenseRoute from './route/expenseRoute';
 const app = express()
 
 console.log("App is being initialized")
@@ -11,7 +11,10 @@ console.log("App is being initialized")
 app.use(express.json())
 
 app.use("/auth", authRoute);
-app.use('/income',incomeRoutes)
+app.use('/income',incomeRoute)
+app.use('/expense',expenseRoute)
+
+
 // To test the route
 app.get("/test", (req, res) => {
   res.json({ message: "Auth route works" });

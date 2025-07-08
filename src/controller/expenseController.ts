@@ -1,29 +1,43 @@
 import { Request, Response } from "express";
-import Expense from '../database/models/expenseModel'
+import Expense from '../database/models/expenseModel';
 
-export const createExpense= (req:Request,res:Response)=>{
+export const createExpense = async (req: Request, res: Response) => {
+    try {
+        let { expenseAmount, expenseSource, expenseDate } = req.body;
 
-    try{
-        const {expenseAmount,expenseSource,expenseDate}=req.body 
-
-        if(!expenseAmount && !expenseSource && !expenseDate){
+        // Validation for missing fields
+        if (!expenseAmount || !expenseSource || !expenseDate) {
             return res.status(400).json({
-                 message:"Please provide expneseAmount,expenseSource,expenseDate"
-            })
+                message: "Please provide expenseAmount, expenseSource, and expenseDate"
+            });
         }
 
-    }catch(error){
-        res.status(500).json({
-            message:"Error occured! ",error
-        })
+
+
+
+expenseAmount=parseFloat(expenseAmount);
+        // Validate if expenseAmount is a number
+ if (isNaN(expenseAmount)) {
+            return res.status(400).json({
+                message: "Invalid expense amount"
+            });
+        }
+// Create and save the expense in the database
+        const expense = await Expense.create({
+            expenseAmount,
+                   expenseSource,
+      expenseDate
+        }as any);
+
+        return res.status(201).json({
+     message: "Expense created successfully",
+            expense
+        });
+
+    } catch (error) {
+    console.error(error);
+        return res.status(500).json({
+            message: "Error occurred!",            error
+        });
     }
-
-    // if(isNaN(expenseAmount)){
-
-    // }
-
-    
-
-
-
-}
+};

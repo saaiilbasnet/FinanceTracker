@@ -8,7 +8,7 @@ import { Column, DataType, Model, Table } from "sequelize-typescript";
     timestamps:true
 })
 
-class Expense extends Model{
+class Expense extends Model<Expense>{
     @Column({
         type:DataType.DECIMAL(10,2),
         allowNull:false,
