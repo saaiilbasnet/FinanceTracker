@@ -1,6 +1,14 @@
-import { NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function SideBar() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+      console.log("Triggered");  
+    localStorage.removeItem("token"); // remove token
+    toast.success("Logged out!");
+    navigate("/login"); // redirect to login
+  };
   return (
     <div className="flex h-screen">
       <aside className="w-64 bg-white shadow-md">
@@ -89,7 +97,8 @@ function SideBar() {
           </NavLink>
         </nav>
 
-        <div className="mt-50 p-4">
+        {/* This div seems positioned incorrectly, needs to be at the bottom */}
+        <div className="absolute bottom-4 p-4 w-full"> {/* Added absolute positioning and w-full */}
           <div className="flex items-center">
             <img
               className="h-8 w-8 rounded-full"
@@ -98,7 +107,10 @@ function SideBar() {
             />
             <div className="ml-3">
               <p className="text-1xl font-bold text-gray-700">Saaiil Basnet</p>
+              <div className="flex gap-3">
               <p className="text-sm font-medium text-gray-500">View Profile</p>
+              <p onClick={handleLogout} className="text-sm font-medium text-red-400 cursor-pointer">Logout</p>
+              </div>
             </div>
           </div>
         </div>

@@ -3,7 +3,6 @@ import { FaArrowUp, FaArrowDown, FaRupeeSign, FaWallet, FaBalanceScale } from "r
 function SummaryCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      
       {/* Total Income Card */}
       <div className="bg-white h-40 p-5 rounded-2xl shadow flex flex-col gap-2">
         <div className="flex justify-between items-center">
@@ -51,7 +50,6 @@ function SummaryCards() {
           Budget under control
         </div>
       </div>
-
     </div>
   );
 }

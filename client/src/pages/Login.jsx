@@ -26,7 +26,7 @@ const logInUserSubmission = async (event) => {
 
   try {
     const response = await axios.post("http://localhost:3000/api/login", loginUser);
-
+    localStorage.setItem("token", response.data.token); 
     toast.success("Login Successful!");
     navigate("/");
   } catch (error) {

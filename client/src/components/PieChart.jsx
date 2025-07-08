@@ -1,16 +1,22 @@
 import { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto'; // Chart.js v3+ (or include via <script> in HTML for static site)
+import Chart from 'chart.js/auto';
 
 const PieChart = () => {
   const chartRef = useRef(null);
+  const chartInstance = useRef(null); // Store the chart instance
 
   useEffect(() => {
     const ctx = chartRef.current.getContext('2d');
 
-    new Chart(ctx, {
+    // Destroy existing chart instance if it exists
+    if (chartInstance.current) {
+      chartInstance.current.destroy();
+    }
+
+    chartInstance.current = new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['Red', 'Blue', 'Yellow'],
+        labels: ['Expenses', 'Income', 'Remaining'],
         datasets: [
           {
             data: [30, 40, 20],
@@ -30,7 +36,7 @@ const PieChart = () => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: false, // Essential for controlling size within flex container
         plugins: {
           legend: {
             position: 'bottom',
@@ -45,11 +51,27 @@ const PieChart = () => {
         },
       },
     });
+
+    // Cleanup on component unmount
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+    };
   }, []);
 
   return (
-    <div className="font-sans leading-normal tracking-normal mt-2 ml-0 h-[400px] w-full  pr-150">
+    // Removed specific width and right padding, now relies on flex container
+    <div className="bg-white p-4 rounded-lg shadow h-[400px] flex-1"> {/* Added bg, padding, shadow, and flex-1 */}
       <canvas ref={chartRef}></canvas>
+      <div className="flex justify-center mt-4"> {/* Added legend manually for better control if needed, or rely on Chart.js legend */}
+        <span className="flex items-center mr-4">
+          <span className="block w-4 h-4 bg-pink-400 rounded-full mr-2"></span>Expenses
+        </span>
+        <span className="flex items-center">
+          <span className="block w-4 h-4 bg-blue-400 rounded-full mr-2"></span>Income
+        </span>
+      </div>
     </div>
   );
 };
