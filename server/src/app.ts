@@ -1,11 +1,23 @@
+
+
 import express from 'express'
+import authRoute from './route/authRoute'
+import incomeRoute from './route/incomeRoute';
+import expenseRoute from './route/expenseRoute';
 const app = express()
+
+console.log("App is being initialized")
+
 app.use(express.json())
 
-//route imports
-import userRoute from './routes/authRoute'
+app.use("/auth", authRoute);
+app.use('/income',incomeRoute)
+app.use('/expense',expenseRoute)
 
-// user route
-app.use("/api",userRoute);
+
+// To test the route
+app.get("/test", (req, res) => {
+  res.json({ message: "Auth route works" });
+});
 
 export default app
