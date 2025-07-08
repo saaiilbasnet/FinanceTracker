@@ -1,6 +1,6 @@
 import {config} from 'dotenv'
 config()
-import app from './app'
+import app from './src/app'
 
 //importing connection.ts
 import './database/connection'
