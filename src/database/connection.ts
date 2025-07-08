@@ -31,7 +31,7 @@ sequelize.authenticate()
 })
 
 // migration 
-sequelize.sync({force: true}).then(()=>{
+sequelize.sync({alter: false}).then(()=>{
     console.log("Migrated to Supabase!");
     
 }).catch((error)=>{

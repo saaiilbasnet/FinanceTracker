@@ -91,11 +91,15 @@ export const cashInHand=async(req:Request,res:Response)=>{
   const totalIncome=await Income.sum('incomeAmount') || 0;
   const totalExpense=await Expense.sum('expenseAmount') || 0;
 
+
+  //  console.log(' totalIncome:', totalIncome);
+  //   console.log(' totalExpense:', totalExpense);
+
   const cashInHand=totalIncome-totalExpense;
 console.log('Total income:', totalIncome);
 
   res.status(200).json({
-    message:"Total income fetched successfully",totalIncome
+    message:"Total income fetched successfully",cashInHand
   })
   }catch(error){
 res.status(500).json({
