@@ -1,17 +1,23 @@
+
+
 import express from 'express'
-import cors from 'cors'
+import authRoute from './route/authRoute'
+import incomeRoute from './route/incomeRoute';
+import expenseRoute from './route/expenseRoute';
 const app = express()
+
+console.log("App is being initialized")
+
 app.use(express.json())
 
-//cors connection
-app.use(cors({
-    origin : "http://localhost:5173"
-}))
+app.use("/auth", authRoute);
+app.use('/income',incomeRoute)
+app.use('/expense',expenseRoute)
 
-//route imports
-import userRoute from './routes/authRoute'
 
-// user route
-app.use("/api",userRoute);
+// To test the route
+app.get("/test", (req, res) => {
+  res.json({ message: "Auth route works" });
+});
 
 export default app
