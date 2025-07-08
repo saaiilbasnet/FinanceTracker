@@ -9,6 +9,7 @@ const asyncErrorHandler = (fn :Function)=>{
         })
        })
     }
+    
 }
 
 export default asyncErrorHandler
