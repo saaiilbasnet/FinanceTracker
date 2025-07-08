@@ -40,7 +40,7 @@ class AuthController{
         const {email, password} = req.body;
         if(!email || !password){
              res.status(400).json({
-                message : "Please enter email and password!"
+                messages : "Please enter email and password!"
             })
         }
 
@@ -88,3 +88,4 @@ class AuthController{
 export default AuthController
 
 // For a push!
+// another push!
