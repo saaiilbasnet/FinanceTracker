@@ -1,17 +1,17 @@
 import express from 'express'
-import cors from 'cors'
+import authRoute from './routes/authRoute'
+import incomeRoute from './routes/incomeRoute';
+import expenseRoute from './routes/expenseRoute';
 const app = express()
+
+console.log("App is being initialized")
+
 app.use(express.json())
 
-//cors connection
-app.use(cors({
-    origin : "http://localhost:5173"
-}))
+app.use("/auth", authRoute);
+app.use('/income',incomeRoute)
+app.use('/expense',expenseRoute)
 
-//route imports
-import userRoute from './routes/authRoute'
 
-// user route
-app.use("/api",userRoute);
 
 export default app

@@ -3,7 +3,9 @@ config()
 import app from './src/app'
 
 //importing connection.ts
-import './src/database/connection'
+import './database/connection'
+
+console.log("Starting server...")
 
 const startServer = ()=>{
     const port = process.env.SERVER_PORT;

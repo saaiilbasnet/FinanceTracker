@@ -1,11 +1,12 @@
+import express from "express";
+import { signup, signin } from '../controller/authController';
 
-import express from 'express'
-import AuthController from '../controllers/authController'
-import asyncErrorHandler from '../services/asyncErrorHandler';
-const router = express.Router()
+const router = express.Router();
+router.post("/signup", signup);
+router.post("/signin", signin);
 
 
-router.route("/register").post(asyncErrorHandler(AuthController.registerUser));
-router.route("/login").post(asyncErrorHandler(AuthController.loginUser));
 
-export default router
+
+
+export default router;
