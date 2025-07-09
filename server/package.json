@@ -4,7 +4,7 @@
   "description": "Build as the Project-I from 2nd semester.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/server.ts"
+    "start": "nodemon server.ts"
   },
   "keywords": [],
   "author": "",
