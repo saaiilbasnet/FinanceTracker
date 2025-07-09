@@ -10,7 +10,9 @@ if(!CONNECTION_STRING){
 }
   const sequelize = new Sequelize(CONNECTION_STRING,{
     dialect : "postgres",
+
     models : [__dirname + '/models']
+
 });
 
 // authentication

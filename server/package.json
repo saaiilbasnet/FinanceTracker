@@ -1,7 +1,7 @@
 {
   "name": "financetracker",
   "version": "1.0.0",
-  "description": "Bulid as the Project-I from 2nd semester.",
+  "description": "Build as the Project-I from 2nd semester.",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.ts"

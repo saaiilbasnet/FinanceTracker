@@ -2,6 +2,7 @@ import express from 'express'
 import authRoute from './routes/authRoute'
 import incomeRoute from './routes/incomeRoute';
 import expenseRoute from './routes/expenseRoute';
+
 import cors from 'cors'
 const app = express()
 
@@ -18,5 +19,10 @@ app.use('/api',incomeRoute)
 app.use('/api',expenseRoute)
 
 
+
+// To test the route
+app.get("/test", (req, res) => {
+  res.json({ message: "Auth route works" });
+});
 
 export default app
