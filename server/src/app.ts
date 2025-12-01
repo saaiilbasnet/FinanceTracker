@@ -2,6 +2,7 @@ import express from 'express'
 import authRoute from './routes/authRoute'
 import incomeRoute from './routes/incomeRoute';
 import expenseRoute from './routes/expenseRoute';
+import userRoutes from "./routes/userRoutes";
 
 import cors from 'cors'
 const app = express()
@@ -15,8 +16,9 @@ app.use(cors({
 app.use(express.json())
 
 app.use('/api', authRoute);
-app.use('/api',incomeRoute)
-app.use('/api',expenseRoute)
+app.use('/api',incomeRoute);
+app.use('/api',expenseRoute);
+app.use("/api/user", userRoutes);
 
 
 

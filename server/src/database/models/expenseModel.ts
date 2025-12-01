@@ -1,7 +1,5 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
 
-
-
 @Table({
     tableName:'expense',
     modelName:'expense',
