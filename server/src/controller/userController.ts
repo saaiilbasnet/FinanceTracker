@@ -1,6 +1,8 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import User from "../database/models/userModel";
+import Income from "../database/models/incomeModel";  // Add this import
+import Expense from "../database/models/expenseModel"; // Add this import
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 
@@ -18,7 +20,8 @@ class UserController {
       }
 
       res.status(200).json(user);
-    } catch (error) {
+    } catch (error: any) {  // Type the error
+      console.error("Get profile error:", error);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -75,7 +78,8 @@ class UserController {
         message: "Profile updated successfully",
         user: updatedUser,
       });
-    } catch (error) {
+    } catch (error: any) {  // Type the error
+      console.error("Update profile error:", error);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -117,7 +121,8 @@ class UserController {
       await User.update({ password: hashedPassword }, { where: { id: userId } });
 
       res.status(200).json({ message: "Password changed successfully" });
-    } catch (error) {
+    } catch (error: any) {  // Type the error
+      console.error("Change password error:", error);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -149,12 +154,20 @@ class UserController {
         return;
       }
 
-      // Delete user
+      // Delete all related incomes and expenses first
+      await Income.destroy({ where: { userId: userId } });
+      await Expense.destroy({ where: { userId: userId } });
+      
+      // Now delete the user
       await User.destroy({ where: { id: userId } });
 
       res.status(200).json({ message: "Account deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Server error" });
+    } catch (error: any) {  // Type the error
+      console.error("Delete account error:", error);
+      res.status(500).json({ 
+        message: "Server error during account deletion",
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   }
 }

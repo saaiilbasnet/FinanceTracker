@@ -5,49 +5,70 @@ import toast from "react-hot-toast";
 
 function LogIn() {
   const navigate = useNavigate();
+
   const [loginUser, setLoginUser] = useState({
     email: "",
     password: ""
   });
 
+  // input field ma change huda state update garna
   const handleChange = (event) => {
     const { name, value } = event.target;
+
     setLoginUser(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
+  // login form submit huda user authenticate:
   const logInUserSubmission = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/api/login", loginUser);
+      // login request after sending email and password in backend
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        loginUser
+      );
 
-      // Save token and username in localStorage
+      // login successful bhaye token ra username localStorage ma save garne
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", response.data.username);
 
       toast.success(response.data.message || "Login Successful!");
-      navigate("/"); // redirect to dashboard
+
+      // redirect dashboard after login
+      navigate("/");
     } catch (error) {
+      // after response from backend
       if (error.response) {
         const status = error.response.status;
-        const message = error.response.data?.message || "An error occurred";
+        const message =
+          error.response.data?.message || "An error occurred";
 
+        // wrong credential ya user navayeko case handle:
         if (status === 404 || status === 401 || status === 400) {
           toast.error(message);
         } else {
           toast.error("Something went wrong!");
         }
+
         navigate("/login");
-      } else if (error.request) {
-        toast.error("No response from server. Please try again later.");
-      } else {
+      }
+      // server bata response nai aayena bhane
+      else if (error.request) {
+        toast.error(
+          "No response from server. Please try again later."
+        );
+      }
+      // aru kunai error aaye
+      else {
         toast.error("Error: " + error.message);
       }
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

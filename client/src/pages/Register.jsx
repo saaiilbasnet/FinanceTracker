@@ -4,43 +4,58 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom'
 
 function Register() {
-  
   const navigate = useNavigate();
+
   const [userRegister, setUserRegister] = useState({
-        username : "",
-        email : "",
-        password : ""
+    username: "",
+    email: "",
+    password: ""
   });
 
-  const handleChange = (event)=>{
-   const {name, value} = event.target;
-   setUserRegister({
-    ...userRegister,
-    [name] : value
-   })
-   console.log(userRegister);
-   
-  }
+  // input field change huda update state
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
+    setUserRegister({
+      ...userRegister,
+      [name]: value
+    });
+  };
+
+  // register form submit huda backend ma data pathaune
   const registerUser = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  try {
-    const response = await axios.post("http://localhost:3000/api/register", userRegister);
+    try {
+      // send username, email ra password in backend
+      await axios.post(
+        "http://localhost:3000/api/auth/register",
+        userRegister
+      );
 
-    toast.success('Register Successful!');
-    navigate('/login');
-  } catch (error) {
-    console.error(error.response?.data || error.message); // For debugging
+      toast.success("Register Successful!");
 
-    if (error.response?.status === 400 && error.response.data.fullError) {
-      const firstError = error.response.data.fullError[0]?.message || "Validation failed";
-      toast.error(firstError);
-    } else {
-      toast.error('Something went wrong!');
+      // register pachi login page ma redirect garna
+      navigate("/login");
+    } catch (error) {
+      // backend bata validation error aayo bhane
+      if (
+        error.response?.status === 400 &&
+        error.response.data.fullError
+      ) {
+        const firstError =
+          error.response.data.fullError[0]?.message ||
+          "Validation failed";
+
+        toast.error(firstError);
+      }
+      // aru kunai error
+      else {
+        toast.error("Something went wrong!");
+      }
     }
-  }
-};
+  };
+
 
   return (
 <div>
@@ -106,17 +121,17 @@ function Register() {
           <div className="mt-6 grid grid-cols-3 gap-3">
             <div>
               <a href="#" className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                <img className="h-5 w-5" src="https://www.svgrepo.com/show/512120/facebook-176.svg" alt />
+                <img className="h-5 w-5" src="https://www.svgrepo.com/show/512120/facebook-176.svg" alt="" />
               </a>
             </div>
             <div>
               <a href="#" className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                <img className="h-5 w-5" src="https://www.svgrepo.com/show/513008/twitter-154.svg" alt />
+                <img className="h-5 w-5" src="https://www.svgrepo.com/show/513008/twitter-154.svg" alt="" />
               </a>
             </div>
             <div>
               <a href="#" className="w-full flex items-center justify-center px-8 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                <img className="h-6 w-6" src="https://www.svgrepo.com/show/506498/google.svg" alt />
+                <img className="h-6 w-6" src="https://www.svgrepo.com/show/506498/google.svg" alt="" />
               </a>
             </div>
           </div>

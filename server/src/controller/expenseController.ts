@@ -1,8 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import Expense from "../database/models/expenseModel";
 
-export const createExpense = async (req: Request, res: Response) => {
+export const createExpense = async (req: AuthRequest, res: Response) => {
   let { expenseAmount, expenseSource, expenseDate } = req.body;
+  const userId = req.user?.id;
 
   // Validation for missing fields
   if (!expenseAmount || !expenseSource || !expenseDate) {
@@ -19,11 +21,12 @@ export const createExpense = async (req: Request, res: Response) => {
     });
   }
 
-  // Create and save the expense in the database
+  // Create and save the expense with userId
   const expense = await Expense.create({
     expenseAmount,
     expenseSource,
     expenseDate,
+    userId,
   } as any);
 
   return res.status(201).json({
@@ -32,73 +35,101 @@ export const createExpense = async (req: Request, res: Response) => {
   });
 };
 
-// Fetch All expenses
-export const getExpenses = async (req: Request, res: Response) => {
-  const expenses = await Expense.findAll();
+// Fetch All expenses for logged-in user
+export const getExpenses = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  
+  const expenses = await Expense.findAll({
+    where: { userId },
+    order: [['expenseDate', 'DESC']]
+  });
+  
   res.status(200).json({
-    message: "Heres is all your expenses",
+    message: "Here is all your expenses",
     expenses,
   });
 };
 
-// Get single expenses
-export const getSingleExpenses = async (req: Request, res: Response) => {
+// Get single expense
+export const getSingleExpenses = async (req: AuthRequest, res: Response) => {
   const id = parseInt(req.params.id);
-  const singleExpense = await Expense.findByPk(id);
+  const userId = req.user?.id;
+  
+  const singleExpense = await Expense.findOne({
+    where: { id, userId }
+  });
+  
   if (!singleExpense) {
-    return res.status(400).json({
-      message: "No expense with that id!!!",
-    });
-  } else {
-    return res.status(200).json({
-      message: `Income with id: ${id}`,
-      singleExpense,
+    return res.status(404).json({
+      message: "No expense with that id or unauthorized!",
     });
   }
+  
+  return res.status(200).json({
+    message: `Expense with id: ${id}`,
+    singleExpense,
+  });
 };
 
-//Edit expenses
-export const editExpense = async (req: Request, res: Response) => {
+// Edit expense
+export const editExpense = async (req: AuthRequest, res: Response) => {
   const id = parseInt(req.params.id);
-  // Update garnna milne kura haru:
+  const userId = req.user?.id;
   const { expenseAmount, expenseDate, expenseSource } = req.body;
 
-  await Expense.update(
+  if (isNaN(id)) {
+    return res.status(400).json({
+      message: "Invalid id"
+    });
+  }
+
+  const [updated] = await Expense.update(
     {
       expenseAmount,
       expenseDate,
       expenseSource,
     },
     {
-      where: { id },
+      where: { id, userId },
     }
   );
-  if (!id) {
-    res.status(400).json({
-      message: "No id found",
+
+  if (!updated) {
+    return res.status(404).json({
+      message: "No expense found or unauthorized",
     });
   }
+  
   res.status(200).json({
-    message: "Expense Updated Successfully!!",
+    message: "Expense Updated Successfully!",
   });
 };
 
-// delete expense:
-export const deleteExpense = async (req: Request, res: Response) => {
+// Delete expense
+export const deleteExpense = async (req: AuthRequest, res: Response) => {
   const id = parseInt(req.params.id);
-  if (!id) {
-    res.status(400).json({
-      message: "No id found",
+  const userId = req.user?.id;
+
+  if (isNaN(id)) {
+    return res.status(400).json({
+      message: "Invalid id"
     });
   }
 
-  await Expense.destroy({
+  const deleted = await Expense.destroy({
     where: {
       id,
+      userId
     },
   });
 
+  if (!deleted) {
+    return res.status(404).json({
+      message: "No expense found or unauthorized",
+    });
+  }
+
   res.status(200).json({
-    message: "Income deleted successfully",
+    message: "Expense deleted successfully",
   });
 };

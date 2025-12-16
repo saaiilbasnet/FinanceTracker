@@ -1,27 +1,30 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import Income from "../database/models/incomeModel";
 import Expense from "../database/models/expenseModel";
 
-export const createIncome = async (req: Request, res: Response) => {
-  // Wrapped inside Try catch
+export const createIncome = async (req: AuthRequest, res: Response) => {
   let { incomeAmount, incomeDate, incomeSource } = req.body;
+  const userId = req.user?.id;
 
-  // Input validation --->
+  // Input validation
   if (!incomeAmount || !incomeDate || !incomeSource) {
     return res.status(400).json({
-      message: "Please provide incomeAmount,incomeDate,incomeSource ",
+      message: "Please provide incomeAmount, incomeDate, incomeSource",
     });
   }
+  
   incomeAmount = parseFloat(incomeAmount);
   if (isNaN(incomeAmount)) {
     return res.status(400).json({ message: "incomeAmount must be a number" });
   }
 
-  // Income add:
+  // Income add with userId
   const income = await Income.create({
     incomeAmount,
     incomeDate,
     incomeSource,
+    userId,
   } as any);
 
   res.status(200).json({
@@ -30,44 +33,49 @@ export const createIncome = async (req: Request, res: Response) => {
   });
 };
 
-// Fetch All income:
-
-export const getAllIncomes = async (req: Request, res: Response) => {
-  const incomes = await Income.findAll();
+// Fetch All income for logged-in user
+export const getAllIncomes = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  const incomes = await Income.findAll({
+    where: { userId },
+    order: [['incomeDate', 'DESC']]
+  });
+  
   res.status(200).json({
-    message: "Heres is all your incomes",
+    message: "Here is all your incomes",
     incomes,
   });
 };
 
-// Fetch a single income:
-
-export const getSingleIncome = async (req: Request, res: Response) => {
+// Fetch a single income
+export const getSingleIncome = async (req: AuthRequest, res: Response) => {
   const id = parseInt(req.params.id);
+  const userId = req.user?.id;
 
-  const income = await Income.findByPk(id);
+  const income = await Income.findOne({
+    where: { id, userId }
+  });
+  
   if (!income) {
     return res.status(404).json({
       message: "No income found, Try different id",
     });
   }
+  
   res.status(200).json({
     message: "Income found",
     income,
   });
 };
 
-// Get total income amount:
-
-export const cashInHand = async (req: Request, res: Response) => {
-  const totalIncome = await Income.sum('incomeAmount') || 0;
-  const totalExpense = await Expense.sum('expenseAmount') || 0;
-
-  //  console.log(' totalIncome:', totalIncome);
-  //   console.log(' totalExpense:', totalExpense);
+// Get total income amount for user
+export const cashInHand = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  
+  const totalIncome = await Income.sum('incomeAmount', { where: { userId } }) || 0;
+  const totalExpense = await Expense.sum('expenseAmount', { where: { userId } }) || 0;
 
   const cashInHand = totalIncome - totalExpense;
-  console.log('Total income:', totalIncome);
 
   res.status(200).json({
     message: "Total income fetched successfully",
@@ -75,20 +83,20 @@ export const cashInHand = async (req: Request, res: Response) => {
   });
 };
 
-// Income Update garne logic:
-
-export const editIncome = async (req: Request, res: Response) => {
+// Income Update
+export const editIncome = async (req: AuthRequest, res: Response) => {
   const id = parseInt(req.params.id);
+  const userId = req.user?.id;
+  
   if (isNaN(id)) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "Please provide a valid id"
     });
   }
 
-  // k k update garne ta?:
   const { incomeAmount, incomeDate, incomeSource } = req.body;
 
-  await Income.update(
+  const [updated] = await Income.update(
     {
       incomeAmount,
       incomeDate,
@@ -96,33 +104,46 @@ export const editIncome = async (req: Request, res: Response) => {
     },
     {
       where: {
-        id: id,
+        id,
+        userId
       },
     }
   );
-  if (!id) {
-    res.status(400).json({
-      message: "No income found",
+
+  if (!updated) {
+    return res.status(404).json({
+      message: "No income found or unauthorized",
     });
   }
+  
   res.status(200).json({
     message: "Income updated successfully",
   });
 };
 
 // Delete income
-export const deleteIncome = async (req: Request, res: Response) => {
+export const deleteIncome = async (req: AuthRequest, res: Response) => {
   const id = parseInt(req.params.id);
+  const userId = req.user?.id;
+  
   if (isNaN(id)) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "Please provide a valid id"
     });
   }
-  await Income.destroy({
+
+  const deleted = await Income.destroy({
     where: {
       id,
+      userId
     },
   });
+
+  if (!deleted) {
+    return res.status(404).json({
+      message: "No income found or unauthorized",
+    });
+  }
 
   res.status(200).json({
     message: "Income deleted successfully",

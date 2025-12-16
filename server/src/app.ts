@@ -3,7 +3,7 @@ import authRoute from './routes/authRoute'
 import incomeRoute from './routes/incomeRoute';
 import expenseRoute from './routes/expenseRoute';
 import userRoutes from "./routes/userRoutes";
-
+import reportRoute from './routes/reportRoute'
 import cors from 'cors'
 const app = express()
 
@@ -15,10 +15,11 @@ app.use(cors({
 
 app.use(express.json())
 
-app.use('/api', authRoute);
-app.use('/api',incomeRoute);
-app.use('/api',expenseRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/income',incomeRoute);
+app.use('/api/expense',expenseRoute);
 app.use("/api/user", userRoutes);
+app.use('/api/reports', reportRoute);
 
 
 

@@ -1,14 +1,15 @@
-
 import express from 'express'
 import { cashInHand, createIncome, deleteIncome, editIncome, getAllIncomes, getSingleIncome } from '../controller/incomeController'
 import asyncErrorHandler from '../services/asyncErrorHandler';
+import authMiddleware from '../middlewares/authMiddleware'; 
 
 const router=express.Router();
 
-router.post('/new', asyncErrorHandler(createIncome));
-router.get('/all', asyncErrorHandler(getAllIncomes));
-router.get('/total', asyncErrorHandler(cashInHand));
-router.get('/:id', asyncErrorHandler(getSingleIncome));
-router.patch('/:id', asyncErrorHandler(editIncome));
-router.delete('/:id', asyncErrorHandler(deleteIncome));
+router.post('/new', authMiddleware, asyncErrorHandler(createIncome));
+router.get('/all', authMiddleware, asyncErrorHandler(getAllIncomes));
+router.get('/total', authMiddleware, asyncErrorHandler(cashInHand));
+router.get('/:id', authMiddleware, asyncErrorHandler(getSingleIncome));
+router.patch('/:id', authMiddleware, asyncErrorHandler(editIncome));
+router.delete('/:id', authMiddleware, asyncErrorHandler(deleteIncome));
+
 export default router

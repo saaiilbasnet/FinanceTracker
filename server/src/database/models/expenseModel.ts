@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import { Column, DataType, Model, Table, ForeignKey, BelongsTo } from "sequelize-typescript";
+import User from "./userModel";
 
 @Table({
     tableName:'expense',
@@ -7,22 +8,31 @@ import { Column, DataType, Model, Table } from "sequelize-typescript";
 })
 
 class Expense extends Model<Expense>{
+
+    @ForeignKey(() => User)
+    @Column({
+        type: DataType.UUID,
+        allowNull: false,
+    })
+    declare userId: string;
+
     @Column({
         type:DataType.DECIMAL(10,2),
         allowNull:false,
-
-    })declare expenseAmount:number
-
-    @Column({
-        type:DataType.STRING,
-        allowNull:false,
-    })declare expenseSource:string
+    }) declare expenseAmount: number
 
     @Column({
         type:DataType.STRING,
         allowNull:false,
-    })declare expenseDate:Date
+    }) declare expenseSource: string
 
+    @Column({
+        type:DataType.DATE,
+        allowNull:false,
+    }) declare expenseDate: Date
+
+    @BelongsTo(() => User)
+    declare user: User;
 }
 
 export default Expense
