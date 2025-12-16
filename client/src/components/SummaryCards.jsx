@@ -10,7 +10,7 @@ function SummaryCards() {
             <FaWallet className="text-xl" />
             <span className="font-semibold text-gray-700">Total Income</span>
           </div>
-          <button className="text-gray-400">⋮</button>
+          <button clasasName="text-gray-400">⋮</button>
         </div>
         <div className="text-2xl font-bold text-gray-900">₹1,50,000.00</div>
         <div className="flex items-center text-green-500 font-medium">
