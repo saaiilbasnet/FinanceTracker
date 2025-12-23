@@ -94,3 +94,6 @@ npm start
 
 # Start the frontend-development server
 npm run dev
+```
+## Contribution
+### Feel free to contribute and contact us for any feedbacks !
