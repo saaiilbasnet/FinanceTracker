@@ -89,5 +89,8 @@ cd FinanceTracker
 # Install dependencies
 npm install
 
-# Start the development server
+# Start the backend-development server
+npm start
+
+# Start the frontend-development server
 npm run dev
