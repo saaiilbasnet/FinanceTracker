@@ -245,7 +245,7 @@ function Settings() {
         </div>
       </div>
 
-      {/* DELETE CONFIRMATION MODAL - Also enhanced */}
+      {/* DELETE CONFIRMATION MODAL */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4" onClick={() => setShowDeleteModal(false)}>
           <div className="bg-white rounded-xl p-8 w-full max-w-lg shadow-2xl border-4 border-red-600" onClick={(e) => e.stopPropagation()}>
