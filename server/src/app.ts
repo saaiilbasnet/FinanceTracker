@@ -24,8 +24,8 @@ app.use('/api/reports', reportRoute);
 
 
 // To test the route
-app.get("/test", (req, res) => {
-  res.json({ message: "Auth route works" });
-});
+// app.get("/test", (req, res) => {
+//   res.json({ message: "Auth route works" });
+// });
 
 export default app
